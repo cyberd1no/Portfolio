@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cyberd1no | DNB // FPS // MAINFRAME</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: { 
+                            black: '#050505', 
+                            cyan: '#00e5ff', 
+                            magenta: '#ff0055', /* Un magenta más agresivo/rojo */
+                            purple: '#8a2be2', 
+                            dark: '#0f0f13' 
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Orbitron', 'sans-serif'],
+                        sub: ['Rajdhani', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Estilos Personalizados Cyberpunk -->
+    <style>
+        body {
+            background-color: #050505;
+            color: #e2e8f0;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+                linear-gradient(rgba(0, 229, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.04) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+
+        /* Scanlines más sutiles que no oscurecen la pantalla */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        /* Esquinas Cortadas (Cyberpunk Motif) */
+        .clip-corner {
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+        }
+        .clip-corner-reverse {
+            clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%, 0 20px);
+        }
+
+        /* Neón y Brillos Mejorados */
+        .neon-text-cyan { text-shadow: 0 0 5px #00e5ff, 0 0 15px rgba(0, 229, 255, 0.5); }
+        .neon-text-magenta { text-shadow: 0 0 5px #ff0055, 0 0 15px rgba(255, 0, 85, 0.5); }
+        
+        .neon-box-cyan {
+            border: 1px solid #00e5ff;
+            box-shadow: 0 0 10px rgba(0,229,255,0.2), inset 0 0 15px rgba(0,229,255,0.1);
+        }
+        .neon-box-cyan:hover {
+            background-color: rgba(0,229,255,0.1);
+            box-shadow: 0 0 20px rgba(0,229,255,0.5), inset 0 0 20px rgba(0,229,255,0.2);
+        }
+
+        .neon-box-magenta {
+            border: 1px solid #ff0055;
+            box-shadow: 0 0 10px rgba(255,0,85,0.2), inset 0 0 15px rgba(255,0,85,0.1);
+        }
+        .neon-box-magenta:hover {
+            background-color: rgba(255,0,85,0.1);
+            box-shadow: 0 0 20px rgba(255,0,85,0.5), inset 0 0 20px rgba(255,0,85,0.2);
+        }
+
+        /* Efecto Glitch Limpio para el título */
+        .glitch-text {
+            position: relative;
+        }
+        .glitch-text::before, .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.8;
+        }
+        .glitch-text::before {
+            color: #00e5ff;
+            z-index: -1;
+            transform: translate(-3px, 2px);
+            animation: glitch-anim 3s infinite alternate-reverse;
+        }
+        .glitch-text::after {
+            color: #ff0055;
+            z-index: -2;
+            transform: translate(3px, -2px);
+            animation: glitch-anim 2s infinite alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip-path: polygon(0 2%, 100% 2%, 100% 5%, 0 5%); transform: translate(-2px, 2px); }
+            20% { clip-path: polygon(0 15%, 100% 15%, 100% 15%, 0 15%); transform: translate(2px, -2px); }
+            40% { clip-path: polygon(0 10%, 100% 10%, 100% 20%, 0 20%); transform: translate(-2px, 2px); }
+            60% { clip-path: polygon(0 1%, 100% 1%, 100% 2%, 0 2%); transform: translate(2px, -2px); }
+            80% { clip-path: polygon(0 33%, 100% 33%, 100% 33%, 0 33%); transform: translate(-2px, 2px); }
+            100% { clip-path: polygon(0 44%, 100% 44%, 100% 44%, 0 44%); transform: translate(2px, -2px); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #00e5ff; }
+    </style>
+</head>
+<body class="font-mono text-gray-300 antialiased selection:bg-cyber-cyan selection:text-black">
+
+    <!-- NAVBAR -->
+    <nav class="fixed w-full z-40 top-0 border-b border-cyber-cyan/20 bg-cyber-black/90 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="font-display font-black text-2xl tracking-widest text-white flex items-center gap-2">
+                CYBERD1NO<span class="w-3 h-3 bg-cyber-magenta animate-pulse block"></span>
+            </div>
+            <div class="hidden md:flex space-x-10 text-sm font-bold tracking-widest">
+                <a href="#music" class="text-gray-400 hover:text-cyber-cyan hover:neon-text-cyan transition-all">MUSIC_</a>
+                <a href="#stream" class="text-gray-400 hover:text-cyber-magenta hover:neon-text-magenta transition-all">STREAM_</a>
+                <a href="#network" class="text-gray-400 hover:text-cyber-purple transition-all">NETWORK_</a>
+            </div>
+            <div class="hidden sm:flex items-center space-x-2 border border-red-500/50 px-4 py-1.5 bg-red-500/10 clip-corner">
+                <div class="w-2 h-2 rounded-full bg-red-500 animate-ping"></div>
+                <span class="text-xs font-bold text-red-400 tracking-wider">LIVE NOW</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <!-- Elementos decorativos de fondo -->
+        <div class="absolute top-1/4 left-10 w-64 h-64 bg-cyber-purple/20 blur-[100px] rounded-full"></div>
+        <div class="absolute bottom-1/4 right-10 w-64 h-64 bg-cyber-cyan/10 blur-[100px] rounded-full"></div>
+
+        <div class="relative z-10 text-center px-6 w-full max-w-5xl">
+            <div class="inline-block border border-cyber-cyan/30 px-4 py-1 mb-6 bg-cyber-cyan/5">
+                <p class="text-cyber-cyan text-xs font-bold tracking-[0.4em] uppercase">Sys.Init // User.Active</p>
+            </div>
+            
+            <h1 class="font-display font-black text-5xl sm:text-7xl md:text-8xl lg:text-9xl text-white mb-4 uppercase tracking-tighter glitch-text leading-none" data-text="BASS & BULLETS">
+                BASS & BULLETS
+            </h1>
+            
+            <p class="mt-8 text-base md:text-xl text-gray-400 max-w-2xl mx-auto font-sub tracking-widest uppercase">
+                High-BPM Drum & Bass. High-Tier FPS Gameplay. <br>
+                <span class="text-white">Welcome to the Mainframe.</span>
+            </p>
+            
+            <div class="mt-12 flex flex-col sm:flex-row justify-center gap-6">
+                <!-- Botón Cyan -->
+                <a href="#music" class="clip-corner neon-box-cyan px-10 py-4 font-display font-bold tracking-[0.2em] text-cyber-cyan transition-all duration-300 uppercase text-center flex items-center justify-center gap-3 group">
+                    <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.24 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.84.24 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.6.18-1.2.72-1.38 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+                    Listen Now
+                </a>
+                <!-- Botón Magenta -->
+                <a href="#stream" class="clip-corner neon-box-magenta px-10 py-4 font-display font-bold tracking-[0.2em] text-cyber-magenta transition-all duration-300 uppercase text-center flex items-center justify-center gap-3 group">
+                    <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+                    Watch Live
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- STATS MATRIX -->
+    <section class="border-y border-cyber-cyan/20 bg-cyber-dark/80 py-12 relative z-30">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center">
+            <div class="p-4 border-l border-cyber-cyan/30">
+                <div class="font-display text-4xl font-bold text-white neon-text-cyan mb-2">2.4M</div>
+                <div class="text-xs text-gray-400 font-bold tracking-[0.2em]">TOTAL STREAMS</div>
+            </div>
+            <div class="p-4 border-l border-cyber-cyan/30">
+                <div class="font-display text-4xl font-bold text-white neon-text-cyan mb-2">150K</div>
+                <div class="text-xs text-gray-400 font-bold tracking-[0.2em]">MTH. LISTENERS</div>
+            </div>
+            <div class="p-4 border-l border-cyber-magenta/30 md:border-l-cyber-cyan/30">
+                <div class="font-display text-4xl font-bold text-white neon-text-magenta mb-2">85K</div>
+                <div class="text-xs text-gray-400 font-bold tracking-[0.2em]">FOLLOWERS</div>
+            </div>
+            <div class="p-4 border-l border-cyber-magenta/30 md:border-l-cyber-cyan/30">
+                <div class="font-display text-4xl font-bold text-white neon-text-magenta mb-2">TOP 1%</div>
+                <div class="text-xs text-gray-400 font-bold tracking-[0.2em]">FPS RANKING</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AUDIO MATRIX (MUSIC) -->
+    <section id="music" class="py-32 relative z-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="mb-12 border-l-4 border-cyber-cyan pl-4">
+                <h2 class="font-display text-4xl sm:text-5xl text-white uppercase font-black">Audio <span class="text-cyber-cyan">Matrix</span></h2>
+                <p class="text-cyber-cyan mt-2 text-sm tracking-widest">> ACCESSING DISCOGRAPHY.EXE</p>
+            </div>
+            
+            <div class="grid lg:grid-cols-3 gap-10">
+                <!-- Álbum Card -->
+                <div class="lg:col-span-1 bg-cyber-dark border border-cyber-cyan/20 clip-corner p-6 hover:border-cyber-cyan/60 transition-colors group">
+                    <div class="w-full aspect-square bg-black border border-cyber-cyan/30 mb-6 relative overflow-hidden group-hover:border-cyber-cyan transition-colors">
+                        <!-- Placeholder Imagen abstracta CSS para evitar que se rompa el diseño -->
+                        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cyber-cyan/20 via-black to-black group-hover:scale-110 transition-transform duration-700"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="font-display font-black text-2xl text-cyber-cyan/50 tracking-widest transform -rotate-45 group-hover:text-cyber-cyan transition-colors">NEON_VEINS</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-display font-bold text-2xl text-white uppercase">Neon Veins EP</h3>
+                            <p class="text-xs text-gray-500 mt-1">RELEASED: 2024 // DNB</p>
+                        </div>
+                    </div>
+                    <a href="#" class="block w-full py-3 text-center bg-cyber-cyan/10 border border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan hover:text-black font-bold transition-all text-sm tracking-widest clip-corner">STREAM NOW</a>
+                </div>
+
+                <!-- Reproductor Falso (Placeholder UI) -->
+                <div class="lg:col-span-2 bg-cyber-dark border border-gray-800 clip-corner-reverse p-6 flex flex-col">
+                    <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-800">
+                        <span class="text-sm font-bold text-gray-400 tracking-widest">SPOTIFY_LINK_ESTABLISHED</span>
+                        <div class="flex gap-2">
+                            <span class="w-3 h-3 bg-gray-600 rounded-full"></span>
+                            <span class="w-3 h-3 bg-gray-600 rounded-full"></span>
+                            <span class="w-3 h-3 bg-cyber-cyan rounded-full animate-pulse"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Simulando el Embed de Spotify -->
+                    <div class="flex-1 bg-black border border-gray-800 flex flex-col items-center justify-center relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-gradient-to-t from-cyber-cyan/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <svg class="w-16 h-16 text-gray-700 mb-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.24 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.84.24 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.6.18-1.2.72-1.38 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+                        <p class="text-gray-500 font-bold tracking-widest">[ SPOTIFY IFRAME AREA ]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STREAM MATRIX (GAMING) -->
+    <section id="stream" class="py-32 relative z-20 bg-gradient-to-b from-transparent via-cyber-magenta/5 to-transparent border-y border-cyber-magenta/10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="mb-12 border-l-4 border-cyber-magenta pl-4 text-right flex justify-end">
+                <div>
+                    <h2 class="font-display text-4xl sm:text-5xl text-white uppercase font-black">Broadcast <span class="text-cyber-magenta">Uplink</span></h2>
+                    <p class="text-cyber-magenta mt-2 text-sm tracking-widest flex items-center justify-end gap-2">
+                        <span class="w-2 h-2 bg-cyber-magenta animate-ping"></span>
+                        > TWITCH_CONNECTION.LIVE
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-10">
+                <!-- Video Player Falso -->
+                <div class="lg:col-span-2 bg-black border-2 border-cyber-magenta/40 aspect-video relative group flex items-center justify-center overflow-hidden clip-corner shadow-[0_0_30px_rgba(255,0,85,0.1)]">
+                    <div class="absolute top-4 left-4 bg-red-600 text-white text-xs font-black px-3 py-1 z-20 tracking-widest clip-corner">LIVE</div>
+                    
+                    <!-- Patrón TV de fondo estático -->
+                    <div class="absolute inset-0 bg-[radial-gradient(circle,_transparent_20%,_#000_120%)] z-10"></div>
+                    <div class="w-full h-full bg-cyber-dark absolute inset-0"></div>
+
+                    <!-- Botón Play -->
+                    <div class="relative z-20 w-20 h-20 rounded-full border-2 border-cyber-magenta flex items-center justify-center bg-black/60 group-hover:bg-cyber-magenta/20 transition-all cursor-pointer group-hover:scale-110 shadow-[0_0_15px_rgba(255,0,85,0.5)]">
+                        <div class="w-0 h-0 border-t-[12px] border-t-transparent border-l-[20px] border-l-cyber-magenta border-b-[12px] border-b-transparent ml-2"></div>
+                    </div>
+                </div>
+
+                <!-- Lista de Clips -->
+                <div class="lg:col-span-1 flex flex-col justify-between">
+                    <div class="bg-cyber-dark border border-cyber-magenta/20 p-4 flex-1 clip-corner">
+                        <h3 class="font-display text-xl font-bold text-white mb-6 uppercase border-b border-gray-800 pb-2">Top_Clips</h3>
+                        
+                        <div class="space-y-4">
+                            <!-- Clip 1 -->
+                            <div class="flex gap-4 items-center group cursor-pointer hover:bg-white/5 p-2 transition-colors">
+                                <div class="w-20 h-14 bg-black border border-gray-700 group-hover:border-cyber-magenta transition-colors"></div>
+                                <div>
+                                    <p class="text-sm font-bold text-white group-hover:text-cyber-magenta transition-colors uppercase">1v4 Clutch Insane</p>
+                                    <p class="text-xs text-gray-500">12K Views // FPS</p>
+                                </div>
+                            </div>
+                            <!-- Clip 2 -->
+                            <div class="flex gap-4 items-center group cursor-pointer hover:bg-white/5 p-2 transition-colors">
+                                <div class="w-20 h-14 bg-black border border-gray-700 group-hover:border-cyber-magenta transition-colors"></div>
+                                <div>
+                                    <p class="text-sm font-bold text-white group-hover:text-cyber-magenta transition-colors uppercase">Beat Drop Reaction</p>
+                                    <p class="text-xs text-gray-500">8K Views // DNB</p>
+                                </div>
+                            </div>
+                            <!-- Clip 3 -->
+                            <div class="flex gap-4 items-center group cursor-pointer hover:bg-white/5 p-2 transition-colors">
+                                <div class="w-20 h-14 bg-black border border-gray-700 group-hover:border-cyber-magenta transition-colors"></div>
+                                <div>
+                                    <p class="text-sm font-bold text-white group-hover:text-cyber-magenta transition-colors uppercase">Flick of the year</p>
+                                    <p class="text-xs text-gray-500">22K Views // FPS</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="mt-4 block w-full py-4 text-center bg-cyber-magenta/10 border border-cyber-magenta text-cyber-magenta hover:bg-cyber-magenta hover:text-white font-black transition-all text-sm tracking-[0.2em] uppercase clip-corner shadow-[0_0_10px_rgba(255,0,85,0.2)]">ENTER CHANNEL</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NETWORK (LEAD CAPTURE) -->
+    <section id="network" class="py-32 relative z-20">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="bg-cyber-dark border border-cyber-purple/40 clip-corner p-10 md:p-16 relative overflow-hidden">
+                <!-- Fondo glow -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-cyber-purple/10 blur-[80px]"></div>
+                
+                <div class="relative z-10 text-center">
+                    <svg class="w-16 h-16 text-cyber-purple mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="1" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    <h2 class="font-display font-black text-4xl md:text-5xl text-white mb-4 uppercase">Join The <span class="text-cyber-purple">Syndicate</span></h2>
+                    <p class="text-gray-400 mb-10 max-w-xl mx-auto font-sub text-lg">
+                        Bypass the algorithm. Direct comms for exclusive track drops, secret stream lobbies, and merch.
+                    </p>
+                    
+                    <form class="flex flex-col sm:flex-row gap-4 justify-center" onsubmit="event.preventDefault();">
+                        <input type="email" placeholder="> ENTER_EMAIL..." required class="bg-black border-b-2 border-cyber-purple text-cyber-purple px-6 py-4 focus:outline-none focus:bg-cyber-purple/5 flex-1 font-mono text-sm max-w-md w-full placeholder-cyber-purple/40 transition-colors uppercase font-bold">
+                        
+                        <button type="submit" class="bg-cyber-purple text-white px-10 py-4 font-display font-black tracking-widest hover:bg-white hover:text-cyber-purple transition-colors border border-cyber-purple uppercase text-sm w-full sm:w-auto clip-corner shadow-[0_0_20px_rgba(138,43,226,0.4)] hover:shadow-[0_0_30px_rgba(255,255,255,0.6)]">
+                            Initialize
+                        </button>
+                    </form>
+
+                    <div class="mt-8 inline-block bg-black px-4 py-2 border border-gray-800">
+                        <p class="text-xs text-gray-500 font-bold tracking-widest flex items-center justify-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 block"></span>
+                            ENCRYPTION ENABLED
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-gray-800 bg-black py-12 relative z-20">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="font-display font-black text-2xl tracking-widest text-gray-600">
+                CYBERD1NO
+            </div>
+            
+            <!-- Redes -->
+            <div class="flex gap-8">
+                <a href="#" class="text-gray-600 hover:text-cyber-cyan transition-colors group">
+                    <span class="sr-only">Spotify</span>
+                    <svg class="w-8 h-8 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.24 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.84.24 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.6.18-1.2.72-1.38 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+                </a>
+                <a href="#" class="text-gray-600 hover:text-cyber-magenta transition-colors group">
+                    <span class="sr-only">Twitch</span>
+                    <svg class="w-8 h-8 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+                </a>
+                <a href="#" class="text-gray-600 hover:text-cyber-purple transition-colors group">
+                    <span class="sr-only">Discord</span>
+                    <svg class="w-8 h-8 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
+                </a>
+            </div>
+
+            <div class="text-xs text-gray-700 font-mono tracking-widest">
+                &copy; <script>document.write(new Date().getFullYear())</script> CYBERD1NO.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
